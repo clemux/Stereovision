@@ -1,4 +1,8 @@
 #include "imagewidget.h"
+#include <QFileDialog>
+#include <QDir>
+#include <QMessageBox>
+#include <QDebug>
 
 ImageWidget::ImageWidget(QWidget *parent) :
     QLabel(parent)
@@ -7,13 +11,14 @@ ImageWidget::ImageWidget(QWidget *parent) :
 
 void ImageWidget::load()
 {
+    qDebug() << "ouverture fichier";
     QString path = QFileDialog::getOpenFileName(this, tr("Ouvrir image"),
                                                     QDir::currentPath());
-    if (!fileName.isEmpty()) {
+    if (!path.isEmpty()) {
         this->map = QPixmap(path);
         if (this->map.isNull()) {
             QMessageBox::information(this, tr("Stereovision"),
-                                     tr("Impossible d'ouvrir %1.").arg(fileName));
+                                     tr("Impossible d'ouvrir %1.").arg(path));
         }
     }
 }
