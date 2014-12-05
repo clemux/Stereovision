@@ -8,13 +8,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ImageWidget leftImage(this);
-    ui->horizontalLayout->addWidget(&leftImage);
+    leftImage = new ImageWidget();
+    rightImage = new ImageWidget();
+    ui->horizontalLayout->addWidget(leftImage);
+    ui->horizontalLayout->addWidget(rightImage);
 
 
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-    connect(ui->actionOpenLeft, SIGNAL(triggered()), &leftImage, SLOT(load()));
+    connect(ui->actionOpenLeft, SIGNAL(triggered()), leftImage, SLOT(load()));
+    connect(ui->actionOpenRight, SIGNAL(triggered()), rightImage, SLOT(load()));
 }
 
 MainWindow::~MainWindow()

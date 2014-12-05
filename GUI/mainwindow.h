@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "imagewidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +18,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    ImageWidget *leftImage;
+    ImageWidget *rightImage;
 };
 
 #endif // MAINWINDOW_H

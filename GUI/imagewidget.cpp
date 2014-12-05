@@ -21,6 +21,7 @@ void ImageWidget::load()
                                      tr("Impossible d'ouvrir %1.").arg(path));
         }
     }
+    this->display();
 }
 
 void ImageWidget::display()
