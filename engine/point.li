@@ -1,0 +1,45 @@
+Section Header
+
+  + name      := POINT;
+  - copyright := "2014 Benjamin Chetioui";
+  - author    := "Benjamin Chetioui";
+  - comment   := "Point prototype for a 3D engine";
+
+Section Inherit
+   
+    - parent_point:OBJECT := OBJECT;
+
+Section Public
+
+  + x:INTEGER_32; // x coordinate
+  + y:INTEGER_32; // y coordinate
+  + z:INTEGER_32; // z coordinate
+  + color:UINTEGER_32 := 0; // Pixel color
+
+  - create (a,b,c:INTEGER_32) <-
+  (
+    x := a;
+    y := b;
+    z := c;
+  );
+
+  - move (a,b,c:INTEGER_32) <-
+  (
+    x := a;
+    y := b;
+    z := c;
+  );
+
+  - change_color (col:UINTEGER_32) <-
+  (
+    color := col;
+  );
+  
+  - debug <-
+  (
+	x.print;
+	" ".print;
+	y.print;
+	" ".print;
+	z.println;
+  );

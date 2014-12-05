@@ -1,0 +1,216 @@
+Section Header
+
+  + name      := MODE;
+  - copyright := "2003-2008 Sonntag Benoit";
+  - author    := "Sonntag Benoit (sonntag@icps.u-strasbg.fr)";
+  - comment   := "Modélisation 3D de formes";
+
+Section Inherit
+
+  + parent_area:Expanded AREA;
+  + parent_g_expr:Expanded G_EXPR;
+
+Section Public
+
+  - angle_x:UINTEGER_8;
+  - angle_y:UINTEGER_8;
+  - angle_z:UINTEGER_8;
+
+  - tab_sin:FAST_ARRAY(INTEGER_32) :=
+  ( 
+    + result:FAST_ARRAY(INTEGER_32);
+    + r:REAL;
+    result := FAST_ARRAY(INTEGER_32).create_with_capacity 256;
+    0.to 255 do { i:INTEGER;
+      r := (REAL.pi/128*i).sin * 256;
+      result.add_last (r.to_integer);
+    };
+    result
+  );
+
+  //
+  // Width / Height
+  //
+
+  - width_min:INTEGER  := 640;
+
+  - height_min:INTEGER := 480;
+
+  //
+  // Creation.
+  //
+
+  - init p:ABSTRACT_STRING :G_EXPR <-
+  (
+    TIMER.add_client Self;
+    // Init Sin.
+    G_RAW.create (Self.fix_height.fix_width)
+  );
+
+  - run p:ABSTRACT_STRING :G_WIN_OUT <-
+  (
+    G_WIN_OUT.create "Modelisation 3D" with (init p)
+  );
+
+  - main <-
+  (
+    // Init window.
+    VIDEO.make_size (width_min+64,height_min+64);
+    DESK.make VIDEO with (
+      G_OUT.create "Modelisation 3D" justify (G_OUT.center) / init "./"
+    );
+  );
+
+  //
+  // Update position.
+  //
+
+  - set_position rac:AREA at (x,y:INTEGER) size (w,h:INTEGER) <-
+  (
+    update rac from (x,y) size (w,h);
+  );
+
+  //
+  // Display.
+  //
+
+  - capacity:INTEGER := 24;
+  - nb_objects:INTEGER := -1;
+
+  /*- atoi (buf:NATIVE_ARRAY(UINTEGER_8)) :INTEGER <-
+  (
+    + result:INTEGER := 0;
+    STRING:str;
+    result
+  );
+
+  - lines_to_draw:FAST_ARRAY(LINES) :=
+  (
+    + result:FAST_ARRAY(LINES);
+    + new_lines, tmp:LINES;
+    + new_point:POINT;
+    
+  );*/
+
+  - lines_to_draw:FAST_ARRAY(LINES) :=
+  (
+    + result:FAST_ARRAY(LINES);
+    + new_lines, tmp:LINES;
+    + new_point:POINT;
+    result := FAST_ARRAY(LINES).create_with_capacity(capacity);
+    new_point := POINT.clone;
+    new_lines := LINES.clone;
+    new_point.create (64, 64, 64);
+    new_lines.create (new_point, capacity);
+    new_point.move (-64, 64, 64);
+    new_lines.add_dest(new_point);
+    new_point.move (64, -64, 64);
+    new_lines.add_dest(new_point);
+    new_point.move (64, 64, -64);
+    new_lines.add_dest(new_point);
+    tmp := new_lines.clone;
+    result.add_last tmp;
+    new_point.create (-64, 64, 64);
+    new_lines.create (new_point, capacity);
+    new_point.move (64, -64, 64);
+    new_lines.add_dest(new_point);
+    new_point.move (64, 64, -64);
+    new_lines.add_dest(new_point);
+    tmp := new_lines.clone;
+    result.add_last tmp;
+    new_point.create (64, -64, 64);
+    new_lines.create (new_point, capacity);
+    new_point.move (64, 64, -64);
+    new_lines.add_dest(new_point);
+    tmp := new_lines.clone;
+    result.add_last tmp;
+    nb_objects := 2;
+    result
+  );  
+
+  - draw (x0,y0:INTEGER) to (x1,y1:INTEGER) <-
+  ( 
+    + up:INTEGER;
+    + current_lines:LINES;
+    + p:POINT;
+
+    clipping (x0,y0) to (x1,y1);
+    rectangle_fill (x0,y0) to (x1,y1) color 0;
+
+    0.to nb_objects do { i:INTEGER;
+      current_lines := lines_to_draw.item i;
+      up := current_lines.nb_elem;
+      0.to up do { j:INTEGER;
+      move_to (current_lines.src_rotated.x, current_lines.src_rotated.y);
+        p := current_lines.get_rotated_point j;
+        (p != NULL).if {
+          line_to (p.x, p.y) color 0FF_FF_FFh;
+        };
+      };
+    };
+  );
+
+
+  - rotate_point2d (x0,y0,z0:INTEGER) :(INTEGER,INTEGER) <-
+  (
+    + x1,y1,z1:INTEGER;
+    x1 := (x0*tab_sin.item (angle_z+64) - y0*tab_sin.item angle_z) >> 8;
+    y1 := (x0*tab_sin.item angle_z + y0*tab_sin.item (angle_z+64)) >> 8; 
+    z1 := z0;
+    //
+    x1 := (x1*tab_sin.item (angle_y+64) - z1*tab_sin.item angle_y) >> 8;
+    y1 := y1;
+    z1 := (x1*tab_sin.item angle_y + z1*tab_sin.item (angle_y+64)) >> 8;
+    //
+    x1 := x1 + (width_min>>1);
+    y1 := y1 + (height_min>>1);
+    x1,y1
+  );
+
+  //
+  // Events.
+  //
+
+  - receive msg:EVENT <-
+  ( + evt_time:EVENT_TIMER;
+    + evt_mouse:EVENT_MOUSE;
+    + win:AREA;
+    + x0,y0,z0,x,y:INTEGER;
+    + up:UINTEGER_32;
+    + current_lines:LINES;
+    + tmp:POINT;
+
+    tmp := POINT.clone;
+
+    evt_mouse ?= msg;
+    (evt_mouse != NULL).if {
+      win := DESK.get_object (evt_mouse.x_current,evt_mouse.y_current);
+      (win != Self).if {
+        DESK.receive msg;
+      };
+    };
+
+    evt_time ?= msg;
+    ((evt_time != NULL) && {evt_time.destination = NULL}).if {
+      angle_x := angle_x + 1;
+      angle_y := angle_y + 2;
+      angle_z := angle_z + 3;
+      //
+      0.to nb_objects do { i:INTEGER;
+        current_lines := lines_to_draw.item i;
+        (x,y) := rotate_point2d(current_lines.src.x, current_lines.src.y, current_lines.src.z);
+        tmp.create(x, y, 0);
+        current_lines.set_rotated_source(tmp);
+        up := current_lines.nb_elem;
+        0.to up do { k:INTEGER;
+          (x0,y0,z0) := current_lines.get_point_co(k);
+          (x,y) := rotate_point2d(x0, y0, z0);
+          tmp.move(x, y, 0);
+          current_lines.set_rotated_point(tmp, k);
+        };
+        lines_to_draw.put current_lines to i;
+      };
+      //
+      refresh;
+    };
+  );

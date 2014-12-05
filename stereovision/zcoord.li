@@ -1,0 +1,37 @@
+Section Header
+
+  + name      := ZCOORD;
+  - copyright := "2014 Benjamin Chetioui";
+  - author    := "Benjamin Chetioui";
+  - comment   := "Contains function related to stereovision.";
+
+Section Public
+
+	/* Initializing stuff. */
+  - init:G_EXPR <-
+  (
+    G_RAW.create (Self.fix_height.fix_width)
+  );
+  
+  /* Running stuff. */
+  - run:G_WIN_OUT <-
+  (
+    G_WIN_OUT.create "3D models" with init
+  );
+
+  - main <-
+  (
+    VIDEO.make_size(650, 650);
+    DESK.make VIDEO with (
+      G_RAW.create (G_IMG.create "bottle_right.bmp") /
+      G_BUTTON.create (G_OUT.create "Exit" justify (G_OUT.center)) action
+      { b:G_BUTTON; die_with_code exit_success_code; }
+    );
+  );
+  
+  - draw (x0,y0:INTEGER) to (x1,y1:INTEGER) <-
+  (
+	height_min.print;
+	" ".print;
+	width_min.println;
+  );

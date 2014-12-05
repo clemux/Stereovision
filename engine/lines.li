@@ -1,0 +1,80 @@
+Section Header
+
+  + name      := LINES;
+  - copyright := "2014 Benjamin Chetioui";
+  - author    := "Benjamin Chetioui";
+  - comment   := "Un point et les lignes qui en sont issues (3D)";
+
+Section Inherit
+
+  + parent_lines:OBJECT := OBJECT;
+
+Section Public
+
+  + src:POINT;
+  + dest:FAST_ARRAY(POINT);
+  + src_rotated:POINT;
+  + dest_rotated:FAST_ARRAY(POINT);
+  + nb_elem:INTEGER := -1;
+
+  - create (p:POINT, size:UINTEGER_32) <-
+  (
+    + new_array, new_array2:FAST_ARRAY(POINT);
+    nb_elem := -1;
+    src := p.clone;
+    src_rotated := p.clone;
+    new_array := FAST_ARRAY(POINT).create size;
+    new_array2 := FAST_ARRAY(POINT).create size;
+    dest := new_array;
+    dest_rotated := new_array2;
+  );
+
+  - add_dest (p:POINT) <-
+  (
+    + np:POINT;
+    np := p.clone;
+    dest.put np to (nb_elem+1);
+    nb_elem := nb_elem+1;
+  );
+
+  - get_point (index:UINTEGER_32) :POINT <-
+  (
+    dest.item index
+  );
+
+  - get_point_co (index:UINTEGER_32) :(INTEGER,INTEGER,INTEGER) <-
+  (
+    + p:POINT;
+    p := dest.item index;
+    p.x,p.y,p.z
+  );
+
+  - get_rotated_point (index:UINTEGER_32) :POINT <-
+  (
+    dest_rotated.item index
+  );
+
+  - set_rotated_source (p:POINT) <-
+  (
+    src_rotated := p.clone;
+  );
+
+  - set_rotated_point (p:POINT, index:UINTEGER_32) <-
+  (
+    + np:POINT;
+    np := p.clone;
+    dest_rotated.put np to index;
+  );
+
+  - debug <-
+  (
+    + p:POINT;
+    0.to nb_elem do { i:INTEGER;
+      p := (dest.item i).clone;
+      p.x.print;
+      " ".print;
+      p.y.print;
+      " ".print;
+      p.z.println;
+    };
+  );
