@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
-    connect(ui->actionOpenLeft, SIGNAL(triggered()), leftImage, SLOT(load()));
+    connect(ui->actionOpenLeft, SIGNAL(triggered()), &leftImage, SLOT(load()));
 }
 
 MainWindow::~MainWindow()
