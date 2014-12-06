@@ -77,57 +77,51 @@ Section Public
   - capacity:INTEGER := 24;
   - nb_objects:INTEGER := -1;
 
-  /*- atoi (buf:NATIVE_ARRAY(UINTEGER_8)) :INTEGER <-
-  (
-    + result:INTEGER := 0;
-    STRING:str;
-    result
-  );
-
+  // Initializing our lines and points to draw using standard input.
   - lines_to_draw:FAST_ARRAY(LINES) :=
   (
     + result:FAST_ARRAY(LINES);
     + new_lines, tmp:LINES;
     + new_point:POINT;
-    
-  );*/
+    + nb_points:INTEGER;
+    + local:INTEGER;
+    + x,y,z:INTEGER;
 
-  - lines_to_draw:FAST_ARRAY(LINES) :=
-  (
-    + result:FAST_ARRAY(LINES);
-    + new_lines, tmp:LINES;
-    + new_point:POINT;
-    result := FAST_ARRAY(LINES).create_with_capacity(capacity);
+    IO.read_integer;
+    nb_points := IO.IO.last_integer;
+    result := FAST_ARRAY(LINES).create_with_capacity(nb_points);
     new_point := POINT.clone;
     new_lines := LINES.clone;
-    new_point.create (64, 64, 64);
-    new_lines.create (new_point, capacity);
-    new_point.move (-64, 64, 64);
-    new_lines.add_dest(new_point);
-    new_point.move (64, -64, 64);
-    new_lines.add_dest(new_point);
-    new_point.move (64, 64, -64);
-    new_lines.add_dest(new_point);
-    tmp := new_lines.clone;
-    result.add_last tmp;
-    new_point.create (-64, 64, 64);
-    new_lines.create (new_point, capacity);
-    new_point.move (64, -64, 64);
-    new_lines.add_dest(new_point);
-    new_point.move (64, 64, -64);
-    new_lines.add_dest(new_point);
-    tmp := new_lines.clone;
-    result.add_last tmp;
-    new_point.create (64, -64, 64);
-    new_lines.create (new_point, capacity);
-    new_point.move (64, 64, -64);
-    new_lines.add_dest(new_point);
-    tmp := new_lines.clone;
-    result.add_last tmp;
-    nb_objects := 2;
-    result
-  );  
 
+    nb_points.println;
+    1.to nb_points do { i:INTEGER;
+      IO.read_integer;
+      x := IO.last_integer;
+      IO.read_integer;
+      y := IO.last_integer;
+      IO.read_integer;
+      z := IO.last_integer;
+      IO.read_integer;
+      local := IO.last_integer;
+      new_point.create(x,y,z);
+      new_lines.create(new_point, local);
+      1.to local do { j:INTEGER;
+        IO.read_integer;
+        x := IO.last_integer;
+        IO.read_integer;
+        y := IO.last_integer;
+        IO.read_integer;
+        z := IO.last_integer;
+        new_point.move(x,y,z);
+        new_lines.add_dest(new_point);
+      };
+      tmp := new_lines.clone;
+      result.add_last(tmp);
+      nb_objects := nb_objects + 1;
+    };
+    result
+  );
+  
   - draw (x0,y0:INTEGER) to (x1,y1:INTEGER) <-
   ( 
     + up:INTEGER;
@@ -141,7 +135,7 @@ Section Public
       current_lines := lines_to_draw.item i;
       up := current_lines.nb_elem;
       0.to up do { j:INTEGER;
-      move_to (current_lines.src_rotated.x, current_lines.src_rotated.y);
+        move_to (current_lines.src_rotated.x, current_lines.src_rotated.y);
         p := current_lines.get_rotated_point j;
         (p != NULL).if {
           line_to (p.x, p.y) color 0FF_FF_FFh;
