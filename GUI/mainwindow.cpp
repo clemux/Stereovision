@@ -10,8 +10,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     leftImage = new ImageWidget();
     rightImage = new ImageWidget();
-    ui->horizontalLayout->addWidget(leftImage);
-    ui->horizontalLayout->addWidget(rightImage);
+    ui->horizontalLayout->insertWidget(0, leftImage);
+    ui->horizontalLayout->insertWidget(1, rightImage);
+
+    ui->tableWidget->setMinimumWidth(150);
+    ui->tableWidget->setMaximumWidth(200);
+
 
 
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
