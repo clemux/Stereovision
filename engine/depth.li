@@ -1,0 +1,94 @@
+Section Header
+
+  + name := DEPTH;
+  - copyright := "2014 Benjamin Chetioui";
+  - author := "Benjamin Chetioui";
+  - comment := "File containing functions to apply on points.";
+
+Section Inherit
+
+  - parent_depth:OBJECT := OBJECT;
+
+Section Public
+
+  - nb_objects:INTEGER := -1;
+
+  - solve (baseline:REAL) <-
+  (
+    + p1, p2:POINT;
+    + dpi,focal_length,baseline_c:REAL;
+    + nb_points:INTEGER;
+    + x1,y1,x2,y2:INTEGER;
+
+    IO.read_integer;
+    focal_length := IO.last_integer.to_raw_real;
+    IO.read_integer;
+    dpi := IO.last_integer.to_raw_real/2.54;
+    IO.read_integer;
+    nb_points := (IO.last_integer);
+
+    baseline_c := baseline/10*dpi;
+    focal_length := focal_length/10*dpi;
+
+    p1 := POINT.clone;
+    p2 := POINT.clone;
+
+    nb_points.println;
+
+    1.to nb_points do { i:INTEGER;
+      IO.read_integer;
+      x1 := IO.last_integer;
+      IO.read_integer;
+      y1 := IO.last_integer;
+      IO.read_integer;
+      x2 := IO.last_integer;
+      IO.read_integer;
+      y2 := IO.last_integer;
+      p1.create(x1,y1,0);
+      p2.create(x2,y2,0);
+      (x1 > x2).if {
+        p1.depth(p2, baseline_c, focal_length);
+        p1.debug;
+      }
+      else {
+        (x1 = x2).if {
+          "Error: division by zero.".println;
+          die_with_code (1);
+        };
+        p2.depth(p1, baseline_c, focal_length);
+        p2.debug;
+      };
+    };
+  );
+
+  - atoi (str:STRING) :INTEGER <-
+  (
+    + result:INTEGER;
+    + mult:INTEGER;
+    + len:INTEGER;
+
+    len := str.count;
+    result := 0;
+    mult := 1;
+
+    ((str.item 1) = '-').if {
+      mult := -1;
+    }
+    else {
+      result := result + (str.item 1).decimal_value;
+    };
+    2.to len do { i:INTEGER;
+      result := result*10 + (str.item i).decimal_value;
+    };
+    result*mult
+  );
+
+  - main <-
+  (
+    (COMMAND_LINE.count != 2).if {
+      "Usage : ./depth ecart_entre_les_images_en_mm".println;
+      die_with_code (1);
+    };
+
+    solve(atoi(COMMAND_LINE.item 1).to_raw_real);
+  );

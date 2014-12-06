@@ -1,0 +1,7 @@
+==============
+= HOW TO USE =
+==============
+
+Fichiers à compiler :
+	* depth.li (Utiliser depth_test.sh);
+	* mode.li (Utiliser mode_test.sh);

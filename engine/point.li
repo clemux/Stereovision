@@ -35,6 +35,11 @@ Section Public
     color := col;
   );
   
+  - depth (sym_r:POINT, b,f:REAL) <-
+  (
+    z := (f*b/(x-sym_r.x).to_raw_real).to_integer;
+  );
+
   - debug <-
   (
 	x.print;

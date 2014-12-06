@@ -1,8 +1,8 @@
 Section Header
 
   + name      := MODE;
-  - copyright := "2003-2008 Sonntag Benoit";
-  - author    := "Sonntag Benoit (sonntag@icps.u-strasbg.fr)";
+  - copyright := "2014 Benjamin Chetioui";
+  - author    := "Benjamin Chetioui";
   - comment   := "Modélisation 3D de formes";
 
 Section Inherit
@@ -57,7 +57,16 @@ Section Public
     // Init window.
     VIDEO.make_size (width_min+64,height_min+64);
     DESK.make VIDEO with (
-      G_OUT.create "Modelisation 3D" justify (G_OUT.center) / init "./"
+      G_OUT.create "Modelisation 3D" justify (G_OUT.center) /
+      init "./" /
+      G_BUTTON.create (G_OUT.create "Rotation X" justify (G_OUT.center)) action
+      { b:G_BUTTON; switch_x; } |
+      G_BUTTON.create (G_OUT.create "Rotation Y" justify (G_OUT.center)) action
+      { b:G_BUTTON; switch_y; } |
+      G_BUTTON.create (G_OUT.create "Rotation Z" justify (G_OUT.center)) action
+      { b:G_BUTTON; switch_z; } |
+      G_BUTTON.create (G_OUT.create "Exit" justify (G_OUT.center)) action
+      { b:G_BUTTON; die_with_code exit_success_code; }
     );
   );
 
@@ -88,12 +97,11 @@ Section Public
     + x,y,z:INTEGER;
 
     IO.read_integer;
-    nb_points := IO.IO.last_integer;
+    nb_points := IO.last_integer;
     result := FAST_ARRAY(LINES).create_with_capacity(nb_points);
     new_point := POINT.clone;
     new_lines := LINES.clone;
 
-    nb_points.println;
     1.to nb_points do { i:INTEGER;
       IO.read_integer;
       x := IO.last_integer;
@@ -121,7 +129,7 @@ Section Public
     };
     result
   );
-  
+
   - draw (x0,y0:INTEGER) to (x1,y1:INTEGER) <-
   ( 
     + up:INTEGER;
@@ -144,17 +152,89 @@ Section Public
     };
   );
 
+  + rotx:INTEGER := 0;
+  + roty:INTEGER := 0;
+  + rotz:INTEGER := 0;
+
+  - switch_x <-
+  (
+    (rotx = 0).if {
+      ((roty != 1) || {rotz != 1}).if {
+        rotx := 1;
+      };
+    }
+    else {
+      rotx := 0;
+    };
+  );
+
+  - switch_y <- 
+  (
+    (roty = 0).if {
+      ((rotx != 1) || {rotz != 1}).if {
+        roty := 1;
+      };
+    }
+    else {
+      roty := 0;
+    };
+  );
+
+  - switch_z <- 
+  (
+    (rotz = 0).if {
+      ((roty != 1) || {rotx != 1}).if {
+        rotz := 1;
+      };
+    }
+    else {
+      rotz := 0;
+    };
+  );
 
   - rotate_point2d (x0,y0,z0:INTEGER) :(INTEGER,INTEGER) <-
   (
     + x1,y1,z1:INTEGER;
-    x1 := (x0*tab_sin.item (angle_z+64) - y0*tab_sin.item angle_z) >> 8;
-    y1 := (x0*tab_sin.item angle_z + y0*tab_sin.item (angle_z+64)) >> 8; 
-    z1 := z0;
+    + check:INTEGER;
+
+    check := 0;
+    (rotz = 1).if {
+      x1 := (x0*tab_sin.item (angle_z+64) - y0*tab_sin.item angle_z) >> 8;
+      y1 := (x0*tab_sin.item angle_z + y0*tab_sin.item (angle_z+64)) >> 8; 
+      z1 := z0;
+      check := 1;
+    };
     //
-    x1 := (x1*tab_sin.item (angle_y+64) - z1*tab_sin.item angle_y) >> 8;
-    y1 := y1;
-    z1 := (x1*tab_sin.item angle_y + z1*tab_sin.item (angle_y+64)) >> 8;
+    (roty = 1).if {
+      (check = 0).if {
+        x1 := (x0*tab_sin.item (angle_y+64) - z0*tab_sin.item angle_y) >> 8;
+        y1 := y0;
+        z1 := (x0*tab_sin.item angle_y + z0*tab_sin.item (angle_y+64)) >> 8;
+        check := 1;
+      }
+      else {
+        x1 := (x1*tab_sin.item (angle_y+64) - z1*tab_sin.item angle_y) >> 8;
+        y1 := y1;
+        z1 := (x1*tab_sin.item angle_y + z1*tab_sin.item (angle_y+64)) >> 8;
+      };
+    };
+    //
+    (rotx = 1).if {
+      (check = 0).if {
+        x1 := x0;
+        y1 := (y0*tab_sin.item (angle_x+64) - z0*tab_sin.item angle_x) >> 8;
+        z1 := (y0*tab_sin.item angle_x + z0*tab_sin.item (angle_x+64)) >> 8;
+      }
+      else {
+        x1 := x1;
+        y1 := (y1*tab_sin.item (angle_x+64) - z1*tab_sin.item angle_x) >> 8;
+        z1 := (y1*tab_sin.item angle_x + z1*tab_sin.item (angle_x+64)) >> 8;
+      };
+    };
+    (check = 0).if {
+      x1 := x0;
+      y1 := y0;
+    };
     //
     x1 := x1 + (width_min>>1);
     y1 := y1 + (height_min>>1);
