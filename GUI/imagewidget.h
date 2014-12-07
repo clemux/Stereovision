@@ -18,6 +18,7 @@ private:
     void resizeEvent(QResizeEvent *event);
 public:
     explicit ImageWidget(QWidget *parent = 0);
+    int getOriginalWidth();
 signals:
     void pointClicked(QPoint point);
 public slots:

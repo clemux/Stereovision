@@ -17,6 +17,11 @@ ImageWidget::ImageWidget(QWidget *parent) :
 
 }
 
+int ImageWidget::getOriginalWidth()
+{
+    return this->loadedImage->width();
+}
+
 void ImageWidget::load()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("Ouvrir image"),

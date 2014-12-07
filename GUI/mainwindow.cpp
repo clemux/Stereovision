@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "imagewidget.h"
+#include <exportdialog.h>
 #include <qdebug.h>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -24,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionOpenLeft, SIGNAL(triggered()), leftImage, SLOT(load()));
     connect(ui->actionOpenRight, SIGNAL(triggered()), rightImage, SLOT(load()));
+
+    connect(ui->actionExport, SIGNAL(triggered()), this, SLOT(exportData()));
 
     connect(leftImage, SIGNAL(pointClicked(QPoint)), this, SLOT(pointClickedLeft(QPoint)));
     connect(rightImage, SIGNAL(pointClicked(QPoint)), this, SLOT(pointClickedRight(QPoint)));
@@ -96,7 +99,7 @@ void MainWindow::pointClickedRight(QPoint point)
     if (selected.count() > 0) {
         int currentRow = selected[0]->row();
         QPoint leftValue = this->points[currentRow].first;
-        this->updatePoint(currentRow, point, leftValue);
+        this->updatePoint(currentRow, leftValue, point);
     }
     else {
         this->addPoint(QPoint(0, 0), point);
@@ -110,4 +113,31 @@ void MainWindow::deleteClicked()
     if (selected.count() > 0) {
         this->deletePoint(selected[0]->row());
     }
+}
+
+void MainWindow::exportData()
+{
+    ExportDialog dialog(this);
+    dialog.exec();
+
+    QPair<QPoint, QPoint> point;
+    QFile file(dialog.getPath());
+    double sensorResolution = this->leftImage->getOriginalWidth() / dialog.getSensorWidth();
+    qDebug() << "Write in: " << file.fileName() << endl;
+    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream out(&file);
+    out << QString::number(dialog.getFocal()) << endl;
+    out << QString::number(sensorResolution) << endl;
+    out << QString::number(dialog.getBaseline()) << endl;
+    out << QString::number(this->points.count()) << endl;
+    foreach(point, this->points)
+    {
+        out << QString::number(point.first.x()) << " "
+            << QString::number(point.first.y()) << " "
+            << QString::number(point.second.x()) << " "
+            << QString::number(point.second.y()) << " "
+            << endl;
+    }
+
+    file.close();
 }

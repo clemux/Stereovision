@@ -30,6 +30,7 @@ private slots:
     void pointClickedLeft(QPoint point);
     void pointClickedRight(QPoint point);
     void deleteClicked();
+    void exportData();
 };
 
 #endif // MAINWINDOW_H
