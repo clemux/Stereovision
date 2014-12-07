@@ -13,22 +13,27 @@ Section Public
 
   - nb_objects:INTEGER := -1;
 
-  - solve (baseline:REAL) <-
+  - solve <-
   (
     + p1, p2:POINT;
-    + dpi,focal_length,baseline_c:REAL;
+    + dpi,focal_length,baseline:REAL;
     + nb_points:INTEGER;
     + x1,y1,x2,y2:INTEGER;
 
     IO.read_integer;
+    // In mm
     focal_length := IO.last_integer.to_raw_real;
     IO.read_integer;
-    dpi := IO.last_integer.to_raw_real/2.54;
+    // Actually in ppmm
+    dpi := IO.last_integer.to_raw_real;
+    IO.read_integer;
+    // In mm
+    baseline := IO.last_integer.to_raw_real;
     IO.read_integer;
     nb_points := (IO.last_integer);
 
-    baseline_c := baseline/10*dpi;
-    focal_length := focal_length/10*dpi;
+    baseline := baseline*dpi;
+    focal_length := focal_length*dpi;
 
     p1 := POINT.clone;
     p2 := POINT.clone;
@@ -47,7 +52,7 @@ Section Public
       p1.create(x1,y1,0);
       p2.create(x2,y2,0);
       (x1 > x2).if {
-        p1.depth(p2, baseline_c, focal_length);
+        p1.depth(p2, baseline, focal_length);
         p1.debug;
       }
       else {
@@ -55,7 +60,7 @@ Section Public
           "Error: division by zero.".println;
           die_with_code (1);
         };
-        p2.depth(p1, baseline_c, focal_length);
+        p2.depth(p1, baseline, focal_length);
         p2.debug;
       };
     };
@@ -85,10 +90,10 @@ Section Public
 
   - main <-
   (
-    (COMMAND_LINE.count != 2).if {
+    /*(COMMAND_LINE.count != 2).if {
       "Usage : ./depth ecart_entre_les_images_en_mm".println;
       die_with_code (1);
-    };
+    };*/
 
-    solve(atoi(COMMAND_LINE.item 1).to_raw_real);
+    solve;//(atoi(COMMAND_LINE.item 1).to_raw_real);
   );

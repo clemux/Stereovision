@@ -95,6 +95,7 @@ Section Public
     + nb_points:INTEGER;
     + local:INTEGER;
     + x,y,z:INTEGER;
+    + z_min:INTEGER;
 
     IO.read_integer;
     nb_points := IO.last_integer;
@@ -109,6 +110,12 @@ Section Public
       y := IO.last_integer;
       IO.read_integer;
       z := IO.last_integer;
+      (i = 1).if {
+        z_min := z;
+      };
+      (z < z_min).if {
+        z_min := z;
+      };
       IO.read_integer;
       local := IO.last_integer;
       new_point.create(x,y,z);
@@ -120,6 +127,9 @@ Section Public
         y := IO.last_integer;
         IO.read_integer;
         z := IO.last_integer;
+        (z < z_min).if {
+          z_min := z;
+        };
         new_point.move(x,y,z);
         new_lines.add_dest(new_point);
       };
