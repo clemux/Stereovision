@@ -72,7 +72,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Longueur focale</string>
+        <string>Longueur focale (mm)</string>
        </property>
       </widget>
      </item>
@@ -93,7 +93,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Espace entre les caméras</string>
+        <string>Espace entre les caméras (mm)</string>
        </property>
       </widget>
      </item>
