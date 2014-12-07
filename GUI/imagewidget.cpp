@@ -19,7 +19,6 @@ ImageWidget::ImageWidget(QWidget *parent) :
 
 void ImageWidget::load()
 {
-    qDebug() << "ouverture fichier";
     QString path = QFileDialog::getOpenFileName(this, tr("Ouvrir image"),
                                                     QDir::currentPath());
     if (!path.isEmpty()) {
@@ -57,7 +56,13 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (this->loadedImage == NULL)
         return;
+
     QPoint pos = realCoords(event->pos());
+
+    if (pos.x() > this->loadedImage->width()
+        || pos.y() > this->loadedImage->height())
+        return ;
+
     QString posString(QString::number(pos.x()) +
                       ", " +
                       QString::number(pos.y()));
