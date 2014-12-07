@@ -26,10 +26,9 @@ void ImageWidget::load()
         if (this->loadedImage != NULL)
             delete this->loadedImage;
         this->loadedImage = new QPixmap(path);
-        if (this->loadedImage->isNull()) {
+        if (this->loadedImage->isNull())
             QMessageBox::information(this, tr("Stereovision"),
                                      tr("Impossible d'ouvrir %1.").arg(path));
-        }
     }
     this->display();
 }
@@ -41,8 +40,6 @@ void ImageWidget::display()
         int w = this->width();
         int h = this->height();
         this->setPixmap(this->loadedImage->scaled(w, h, Qt::KeepAspectRatio));
-        this->scale = (double) this->loadedImage->width() / (double) this->pixmap()->width();
-        qDebug() << "New ratio:" << this->scale;
     }
 }
 

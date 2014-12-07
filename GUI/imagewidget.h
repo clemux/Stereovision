@@ -11,7 +11,6 @@ class ImageWidget : public QLabel
     Q_OBJECT
 private:
     QPixmap *loadedImage = NULL;
-    double scale;
     QPoint realCoords(QPoint pos);
 
     void mouseMoveEvent(QMouseEvent *event);
