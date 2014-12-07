@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QToolTip>
+#include <QMouseEvent>
 
 ImageWidget::ImageWidget(QWidget *parent) :
     QLabel(parent)
@@ -22,8 +23,10 @@ void ImageWidget::load()
     QString path = QFileDialog::getOpenFileName(this, tr("Ouvrir image"),
                                                     QDir::currentPath());
     if (!path.isEmpty()) {
-        this->map = new QPixmap(path);
-        if (this->map->isNull()) {
+        if (this->loadedImage != NULL)
+            delete this->loadedImage;
+        this->loadedImage = new QPixmap(path);
+        if (this->loadedImage->isNull()) {
             QMessageBox::information(this, tr("Stereovision"),
                                      tr("Impossible d'ouvrir %1.").arg(path));
         }
@@ -33,12 +36,12 @@ void ImageWidget::load()
 
 void ImageWidget::display()
 {
-    if (this->map != NULL)
+    if (this->loadedImage != NULL)
     {
         int w = this->width();
         int h = this->height();
-        this->setPixmap(this->map->scaled(w, h, Qt::KeepAspectRatio));
-        this->scale = (double) this->map->width() / (double) this->pixmap()->width();
+        this->setPixmap(this->loadedImage->scaled(w, h, Qt::KeepAspectRatio));
+        this->scale = (double) this->loadedImage->width() / (double) this->pixmap()->width();
         qDebug() << "New ratio:" << this->scale;
     }
 }
@@ -48,11 +51,26 @@ void ImageWidget::resizeEvent(QResizeEvent*)
     this->display();
 }
 
+QPoint ImageWidget::realCoords(QPoint pos)
+{
+    return pos*(this->loadedImage->width() / this->pixmap()->width());
+}
+
 void ImageWidget::mouseMoveEvent(QMouseEvent *event)
 {
-
-    QString posString(QString::number(event->pos().x()*this->scale) +
+    if (this->loadedImage == NULL)
+        return;
+    QPoint pos = realCoords(event->pos());
+    QString posString(QString::number(pos.x()) +
                       ", " +
-                      QString::number(event->pos().y()*this->scale));
+                      QString::number(pos.y()));
     QToolTip::showText(event->globalPos(), posString);
+
+}
+
+void ImageWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (this->loadedImage == NULL)
+        return;
+    this->pointClicked(realCoords(event->pos()));
 }
