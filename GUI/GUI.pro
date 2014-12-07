@@ -13,8 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    imagewidget.cpp \
+    exportdialog.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    imagewidget.h \
+    exportdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    exportdialog.ui
