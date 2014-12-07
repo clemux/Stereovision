@@ -20,6 +20,12 @@ private:
     Ui::MainWindow *ui;
     ImageWidget *leftImage;
     ImageWidget *rightImage;
+    QVector<QPair<QPoint, QPoint> > points;
+    void updateTable();
+    QString pointToString(QPoint point);
+
+private slots:
+    void addPoint(QPoint point);
 };
 
 #endif // MAINWINDOW_H
