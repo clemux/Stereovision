@@ -43,7 +43,6 @@ void MainWindow::updateTable()
 {
 
     QPair<QPoint, QPoint> pair;
-    qDebug() << "Tableau: ";
     ui->tableWidget->clearContents();
     ui->tableWidget->setRowCount(0);
     foreach(pair, this->points) {
@@ -54,7 +53,6 @@ void MainWindow::updateTable()
         itemRight->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled);
         ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 0, itemLeft);
         ui->tableWidget->setItem(ui->tableWidget->rowCount() - 1, 1, itemRight);
-        qDebug() << pointToString(pair.first) << " - " << pointToString(pair.second);
     }
 }
 
@@ -122,11 +120,13 @@ void MainWindow::exportData()
 
     QPair<QPoint, QPoint> point;
     QFile file(dialog.getPath());
-    double sensorResolution = this->leftImage->getOriginalWidth() / dialog.getSensorWidth();
-    qDebug() << "Write in: " << file.fileName() << endl;
+
+
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     QTextStream out(&file);
     out << QString::number(dialog.getFocal()) << endl;
+    double sensorResolution = (this->leftImage->getOriginalWidth() /
+                               dialog.getSensorWidth());
     out << QString::number(sensorResolution) << endl;
     out << QString::number(dialog.getBaseline()) << endl;
     out << QString::number(this->points.count()) << endl;
