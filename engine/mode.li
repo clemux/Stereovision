@@ -224,6 +224,7 @@ Section Public
         x1 := x0;
         y1 := (y0*tab_sin.item (angle_x+64) - z0*tab_sin.item angle_x) >> 8;
         z1 := (y0*tab_sin.item angle_x + z0*tab_sin.item (angle_x+64)) >> 8;
+        check := 1;
       }
       else {
         x1 := x1;
