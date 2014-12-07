@@ -1,0 +1,46 @@
+Section Header
+
+  + name      := TRIANGULATE;
+  - copyright := "2014 Benjamin Chetioui";
+  - author    := "Benjamin Chetioui";
+  - comment   := "Modélisation 3D de formes";
+
+Section Inherit
+
+  + parent_area:Expanded AREA;
+  + parent_g_expr:Expanded G_EXPR;
+
+Section Public
+
+  - main <-
+  (
+    translating;
+  );
+
+  - nb_objects:INTEGER := -1;
+
+  // Initializing our lines and points to draw using standard input.
+  - translating <-
+  (
+    + nb_points:INTEGER;
+    + x,y,z:INTEGER;
+
+    IO.read_integer;
+    nb_points := IO.last_integer;
+
+    nb_points.println;
+    1.to nb_points do { i:INTEGER;
+      IO.read_integer;
+      x := IO.last_integer;
+      IO.read_integer;
+      y := IO.last_integer;
+      IO.read_integer;
+      z := IO.last_integer;
+      x.print;
+      " ".print;
+      y.print;
+      " ".print;
+      z.println;
+      "-1".println;
+    };
+  );
