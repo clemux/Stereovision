@@ -23,9 +23,13 @@ private:
     QVector<QPair<QPoint, QPoint> > points;
     void updateTable();
     QString pointToString(QPoint point);
-
+    void updatePoint(int row, QPoint left, QPoint right);
+    void addPoint(QPoint left, QPoint right);
+    void deletePoint(int row);
 private slots:
-    void addPoint(QPoint point);
+    void pointClickedLeft(QPoint point);
+    void pointClickedRight(QPoint point);
+    void deleteClicked();
 };
 
 #endif // MAINWINDOW_H
