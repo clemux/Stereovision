@@ -40,7 +40,7 @@ ExportDialog::~ExportDialog()
 
 void ExportDialog::browsePath()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Exporter sous"),
+    QString path = QFileDialog::getSaveFileName(this, tr("Exporter sous"),
                                                 QDir::currentPath());
     ui->pathEdit->setText(path);
 }

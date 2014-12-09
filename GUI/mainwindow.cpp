@@ -3,6 +3,7 @@
 #include "imagewidget.h"
 #include <exportdialog.h>
 #include <qdebug.h>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -116,13 +117,28 @@ void MainWindow::deleteClicked()
 void MainWindow::exportData()
 {
     ExportDialog dialog(this);
-    dialog.exec();
+    if (!dialog.exec())
+        return;
 
     QPair<QPoint, QPoint> point;
     QFile file(dialog.getPath());
 
 
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox msgBox;
+        msgBox.setText("Erreur d'ouverture du fichier d'exportation.");
+        msgBox.exec();
+
+        return;
+    }
+
+    if (!this->leftImage->imageIsLoaded()) {
+        QMessageBox msgBox;
+        msgBox.setText("Aucune image n'est chargée");
+        msgBox.exec();
+        return;
+    }
+
     QTextStream out(&file);
     out << QString::number(dialog.getFocal()) << endl;
     double sensorResolution = (this->leftImage->getOriginalWidth() /

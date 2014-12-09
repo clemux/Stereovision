@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QToolTip>
 #include <QMouseEvent>
+#include <QMessageBox>
 
 ImageWidget::ImageWidget(QWidget *parent) :
     QLabel(parent)
@@ -20,6 +21,11 @@ ImageWidget::ImageWidget(QWidget *parent) :
 int ImageWidget::getOriginalWidth()
 {
     return this->loadedImage->width();
+}
+
+bool ImageWidget::imageIsLoaded()
+{
+    return this->loadedImage != NULL;
 }
 
 void ImageWidget::load()
