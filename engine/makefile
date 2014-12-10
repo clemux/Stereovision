@@ -3,6 +3,7 @@ all:
 	lisaac triangulate.li
 	lisaac translate.li
 	lisaac depth.li
+	make clean
 
 mode:
 	lisaac mode.li -boost

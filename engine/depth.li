@@ -16,19 +16,19 @@ Section Public
   - solve <-
   (
     + p1, p2:POINT;
-    + dpi,focal_length,baseline:REAL;
+    + dpi,focal_length,baseline:REAL_16_16;
     + nb_points:INTEGER;
     + x1,y1,x2,y2:INTEGER;
 
-    IO.read_integer;
+    IO.read_line;
     // In mm
-    focal_length := IO.last_integer.to_raw_real;
-    IO.read_integer;
+    focal_length := IO.last_string.to_real_16_16;
+    IO.read_line;
     // Actually in ppmm
-    dpi := IO.last_integer.to_raw_real;
-    IO.read_integer;
+    dpi := IO.last_string.to_real_16_16;
+    IO.read_line;
     // In mm
-    baseline := IO.last_integer.to_raw_real;
+    baseline := IO.last_string.to_real_16_16;
     IO.read_integer;
     nb_points := (IO.last_integer);
 
@@ -49,8 +49,8 @@ Section Public
       x2 := IO.last_integer;
       IO.read_integer;
       y2 := IO.last_integer;
-      p1.create(x1-1280,y1-960,0);
-      p2.create(x2-1280,y2-960,0);
+      p1.create(x1-1280,y1-400,0);
+      p2.create(x2-1280,y2-400,0);
       (x1 > x2).if {
         p1.depth(p2, baseline, focal_length, dpi);
         p1.debug;
@@ -90,10 +90,5 @@ Section Public
 
   - main <-
   (
-    /*(COMMAND_LINE.count != 2).if {
-      "Usage : ./depth ecart_entre_les_images_en_mm".println;
-      die_with_code (1);
-    };*/
-
-    solve;//(atoi(COMMAND_LINE.item 1).to_raw_real);
+    solve;
   );
