@@ -3,6 +3,7 @@
 #include "imagewidget.h"
 #include <exportdialog.h>
 #include <qdebug.h>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->setMinimumWidth(150);
     ui->tableWidget->setMaximumWidth(200);
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
 
 
@@ -84,11 +86,13 @@ void MainWindow::pointClickedLeft(QPoint point)
         int currentRow = selected[0]->row();
         QPoint rightValue = this->points[currentRow].second;
         this->updatePoint(currentRow, point, rightValue);
+        this->updateTable();
     }
     else {
         this->addPoint(point, QPoint(0, 0));
+        this->updateTable();
+        this->ui->tableWidget->selectRow(ui->tableWidget->rowCount() - 1);
     }
-    this->updateTable();
 }
 
 void MainWindow::pointClickedRight(QPoint point)
@@ -116,13 +120,28 @@ void MainWindow::deleteClicked()
 void MainWindow::exportData()
 {
     ExportDialog dialog(this);
-    dialog.exec();
+    if (!dialog.exec())
+        return;
 
     QPair<QPoint, QPoint> point;
     QFile file(dialog.getPath());
 
 
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox msgBox;
+        msgBox.setText("Erreur d'ouverture du fichier d'exportation.");
+        msgBox.exec();
+
+        return;
+    }
+
+    if (!this->leftImage->imageIsLoaded()) {
+        QMessageBox msgBox;
+        msgBox.setText("Aucune image n'est chargée");
+        msgBox.exec();
+        return;
+    }
+
     QTextStream out(&file);
     out << QString::number(dialog.getFocal()) << endl;
     double sensorResolution = (this->leftImage->getOriginalWidth() /

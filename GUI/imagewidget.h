@@ -16,9 +16,11 @@ private:
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void resizeEvent(QResizeEvent *event);
+    QPoint getCenter();
 public:
     explicit ImageWidget(QWidget *parent = 0);
     int getOriginalWidth();
+    bool imageIsLoaded();
 signals:
     void pointClicked(QPoint point);
 public slots:
