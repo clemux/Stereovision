@@ -6,8 +6,8 @@ Section Header
   - comment   := "Point prototype for a 3D engine";
 
 Section Inherit
-   
-    - parent_point:OBJECT := OBJECT;
+
+  - parent_point:OBJECT := OBJECT;
 
 Section Public
 
@@ -34,17 +34,17 @@ Section Public
   (
     color := col;
   );
-  
-  - depth (sym_r:POINT, b,f:REAL) <-
+
+  - depth (sym_r:POINT, b,f,dpi:REAL) <-
   (
-    z := (f*b/(x-sym_r.x).to_raw_real).to_integer;
+    z := (f*b/((x-sym_r.x).to_raw_real/dpi)).to_integer;
   );
 
   - debug <-
   (
-	x.print;
-	" ".print;
-	y.print;
-	" ".print;
-	z.println;
+    x.print;
+    " ".print;
+    y.print;
+    " ".print;
+    z.println;
   );
