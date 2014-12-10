@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->setMinimumWidth(150);
     ui->tableWidget->setMaximumWidth(200);
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
 
 
@@ -85,11 +86,13 @@ void MainWindow::pointClickedLeft(QPoint point)
         int currentRow = selected[0]->row();
         QPoint rightValue = this->points[currentRow].second;
         this->updatePoint(currentRow, point, rightValue);
+        this->updateTable();
     }
     else {
         this->addPoint(point, QPoint(0, 0));
+        this->updateTable();
+        this->ui->tableWidget->selectRow(ui->tableWidget->rowCount() - 1);
     }
-    this->updateTable();
 }
 
 void MainWindow::pointClickedRight(QPoint point)

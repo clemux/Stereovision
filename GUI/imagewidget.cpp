@@ -28,6 +28,11 @@ bool ImageWidget::imageIsLoaded()
     return this->loadedImage != NULL;
 }
 
+QPoint ImageWidget::getCenter()
+{
+    return QPoint(this->loadedImage->width() / 2, this->loadedImage->height() / 2);
+}
+
 void ImageWidget::load()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("Ouvrir image"),
@@ -60,7 +65,7 @@ void ImageWidget::resizeEvent(QResizeEvent*)
 
 QPoint ImageWidget::realCoords(QPoint pos)
 {
-    return pos*(this->loadedImage->width() / this->pixmap()->width());
+    return pos*(this->loadedImage->width() / this->pixmap()->width()) - getCenter();
 }
 
 void ImageWidget::mouseMoveEvent(QMouseEvent *event)
