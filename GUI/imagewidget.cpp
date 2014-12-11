@@ -53,7 +53,7 @@ void ImageWidget::display()
     if (this->loadedImage != NULL)
     {
         int w = this->width();
-        int h = this->height();
+        //int h = this->height();
         //this->setPixmap(this->loadedImage->scaled(w, h, Qt::KeepAspectRatio));
         this->setPixmap(this->loadedImage->scaledToWidth(w));
     }
@@ -94,7 +94,7 @@ void ImageWidget::mousePressEvent(QMouseEvent *event)
 
     QPoint pos = realCoords(event->pos());
     if (pos.x() > this->loadedImage->width()
-        || pos.y() > this->loadedImage->height())
+        || event->pos().y() > this->pixmap()->height())
         return ;
     this->pointClicked(realCoords(event->pos()));
 }
