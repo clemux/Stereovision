@@ -55,7 +55,7 @@
      <x>0</x>
      <y>0</y>
      <width>844</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -66,6 +66,8 @@
     <addaction name="actionOpenRight"/>
     <addaction name="separator"/>
     <addaction name="actionExport"/>
+    <addaction name="actionRun"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <addaction name="menuFichier"/>
@@ -89,6 +91,11 @@
   <action name="actionExport">
    <property name="text">
     <string>Exporter</string>
+   </property>
+  </action>
+  <action name="actionRun">
+   <property name="text">
+    <string>Modéliser</string>
    </property>
   </action>
  </widget>

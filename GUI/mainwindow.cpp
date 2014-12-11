@@ -2,8 +2,10 @@
 #include "ui_mainwindow.h"
 #include "imagewidget.h"
 #include <exportdialog.h>
+#include <rundialog.h>
 #include <qdebug.h>
 #include <QMessageBox>
+#include <QProcess>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpenRight, SIGNAL(triggered()), rightImage, SLOT(load()));
 
     connect(ui->actionExport, SIGNAL(triggered()), this, SLOT(exportData()));
+    connect(ui->actionRun, SIGNAL(triggered()), this, SLOT(runProgram()));
 
     connect(leftImage, SIGNAL(pointClicked(QPoint)), this, SLOT(pointClickedLeft(QPoint)));
     connect(rightImage, SIGNAL(pointClicked(QPoint)), this, SLOT(pointClickedRight(QPoint)));
@@ -159,4 +162,30 @@ void MainWindow::exportData()
     }
 
     file.close();
+}
+
+
+void MainWindow::runProgram()
+{
+    RunDialog dialog(this);
+    if (!dialog.exec())
+        return;
+
+    QFile dataFile(dialog.getDataPath());
+    if (!dataFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox msgBox;
+        msgBox.setText("Erreur d'ouverture du fichier de données");
+        msgBox.exec();
+        return;
+    }
+    dataFile.close();
+
+
+
+    QProcess mode;
+    mode.setStandardInputFile(dialog.getDataPath());
+    mode.start(dialog.getBinaryPath());
+
+    mode.waitForFinished();
+
 }

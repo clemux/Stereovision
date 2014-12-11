@@ -15,11 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     imagewidget.cpp \
-    exportdialog.cpp
+    exportdialog.cpp \
+    rundialog.cpp
 
 HEADERS  += mainwindow.h \
     imagewidget.h \
-    exportdialog.h
+    exportdialog.h \
+    rundialog.h
 
 FORMS    += mainwindow.ui \
-    exportdialog.ui
+    exportdialog.ui \
+    rundialog.ui
