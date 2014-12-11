@@ -52,6 +52,18 @@ Section Public
     G_WIN_OUT.create "Modelisation 3D" with (init p)
   );
 
+  - depth_info <-
+  (
+    + tmp:LINES;
+
+    "===============".println;
+    0.to (nb_objects) do { i:INTEGER;
+      tmp := lines_to_draw.item i;
+      tmp.src.debug;
+    };
+    "===============".println;
+  );
+
   - main <-
   (
     (lines_to_draw,nb_objects) := TRIANGULATE.exec;
@@ -70,6 +82,8 @@ Section Public
       { b:G_BUTTON; zoom (0.5); } |
       G_BUTTON.create (G_OUT.create "Zoom x2" justify (G_OUT.center)) action
       { b:G_BUTTON; zoom (2.0); } |
+      G_BUTTON.create (G_OUT.create "Depth info" justify (G_OUT.center)) action
+      { b:G_BUTTON; depth_info; } |
       G_BUTTON.create (G_OUT.create "Exit" justify (G_OUT.center)) action
       { b:G_BUTTON; die_with_code exit_success_code; }
     );

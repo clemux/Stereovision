@@ -36,6 +36,7 @@ Section Public
     result
   );
 
+  // Couldn't get "append" to work either, re-coded it.
   - concat (f1,f2:FAST_ARRAY(LINES)) :FAST_ARRAY(LINES) <-
   (
     + result:FAST_ARRAY(LINES);
@@ -170,16 +171,6 @@ Section Public
     my_lines,(nb_objects-1)
   );
 
-  /*- main <-
-  (
-    my_lines;
-    //debugging;
-    //" ".println;
-    order_x;
-    my_lines := make(my_lines);
-    debugging;
-  );*/
-
   - debugging <-
   (
     + local:INTEGER;
@@ -233,63 +224,19 @@ Section Public
     + result:FAST_ARRAY(LINES);
     + tmp1,tmp2:FAST_ARRAY(LINES);
     
-    //TODO : DELAUNAY
+    //TODO : DELAUNAY ; Feature yet to be implemented.
     
     tmp1 := f1;
     tmp2 := f2;
     (tmp1.item (tmp1.count-1)).add_dest((tmp2.item 0).src);
     (tmp1.item (tmp1.count-1)).add_dest((tmp2.item 1).src);
     (tmp1.item (tmp1.count-2)).add_dest((tmp2.item 0).src);
-    (tmp1.item (tmp1.count-2)).add_dest((tmp2.item 1).src);
-    tmp1 := order_y(tmp1) size (f1.count);
-    tmp2 := order_y(tmp2) size (f2.count);
-    (tmp1.item (tmp1.count-1)).add_dest((tmp1.item (tmp1.count-2)).src);
-    (tmp2.item (tmp2.count-1)).add_dest((tmp2.item (tmp2.count-2)).src);
+    //(tmp1.item (tmp1.count-2)).add_dest((tmp2.item 1).src);
+    //tmp1 := order_y(tmp1) size (f1.count);
+    //tmp2 := order_y(tmp2) size (f2.count);
+    //(tmp1.item (tmp1.count-1)).add_dest((tmp1.item (tmp1.count-2)).src);
+    //(tmp2.item (tmp2.count-1)).add_dest((tmp2.item (tmp2.count-2)).src);
 
     result := concat(tmp1, tmp2);
     result
   );
-
-  // Initializing our lines and points to draw using standard input.
-  /*- translating <-
-  (
-    + nb_points:INTEGER;
-    + x,y,z:INTEGER;
-
-    IO.read_integer;
-    nb_points := IO.last_integer;
-
-    nb_points.println;
-    1.to nb_points do { i:INTEGER;
-      IO.read_integer;
-      x := IO.last_integer;
-      IO.read_integer;
-      y := IO.last_integer;
-      IO.read_integer;
-      z := IO.last_integer;
-      (i != 1).if {
-        1.println;
-        x.print;
-        " ".print;
-        y.print;
-        " ".print;
-        z.println;
-        "".println;
-      };
-      (i != nb_points).if {
-        x.print;
-        " ".print;
-        y.print;
-        " ".print;
-        z.println;
-      }
-      else {
-        x.print;
-        " ".print;
-        y.print;
-        " ".print;
-        z.println;
-        "0".println;
-      };
-    };
-  );*/
