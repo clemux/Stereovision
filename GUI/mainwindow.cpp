@@ -23,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
-
+    this->setWindowTitle("Stéréovison");
+    this->setWindowState(Qt::WindowMaximized);
 
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
