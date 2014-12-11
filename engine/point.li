@@ -1,20 +1,19 @@
 Section Header
 
   + name      := POINT;
-  - copyright := "2014 Benjamin Chetioui";
-  - author    := "Benjamin Chetioui";
+  - copyright := "2014 Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
+  - author    := "Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
   - comment   := "Point prototype for a 3D engine";
 
 Section Inherit
-   
-    - parent_point:OBJECT := OBJECT;
+
+  - parent_point:OBJECT := OBJECT;
 
 Section Public
 
   + x:INTEGER_32; // x coordinate
   + y:INTEGER_32; // y coordinate
   + z:INTEGER_32; // z coordinate
-  + color:UINTEGER_32 := 0; // Pixel color
 
   - create (a,b,c:INTEGER_32) <-
   (
@@ -30,21 +29,16 @@ Section Public
     z := c;
   );
 
-  - change_color (col:UINTEGER_32) <-
+  - depth (sym_r:POINT, b,f,ppmm:REAL_16_16) <-
   (
-    color := col;
-  );
-  
-  - depth (sym_r:POINT, b,f:REAL) <-
-  (
-    z := (f*b/(x-sym_r.x).to_raw_real).to_integer;
+    z := (f*b/((x-sym_r.x).to_real_16_16/ppmm)).to_integer;
   );
 
   - debug <-
   (
-	x.print;
-	" ".print;
-	y.print;
-	" ".print;
-	z.println;
+    x.print;
+    " ".print;
+    y.print;
+    " ".print;
+    z.println;
   );

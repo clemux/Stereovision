@@ -1,8 +1,8 @@
 Section Header
 
   + name      := TRIANGULATE;
-  - copyright := "2014 Benjamin Chetioui";
-  - author    := "Benjamin Chetioui";
+  - copyright := "2014 Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
+  - author    := "Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
   - comment   := "Modélisation 3D de formes";
 
 Section Inherit
@@ -12,35 +12,231 @@ Section Inherit
 
 Section Public
 
-  - main <-
-  (
-    translating;
-  );
-
-  - nb_objects:INTEGER := -1;
+  + nb_objects:INTEGER := 0;
 
   // Initializing our lines and points to draw using standard input.
-  - translating <-
+  + my_lines:FAST_ARRAY(LINES);
+
+  // Subarray method in lib/internal/portable/collection/arrayed_collection.li
+  // might need some refactoring as I couldn't get it to work when coding this.
+  - subarray (f1:FAST_ARRAY(LINES)) from min:INTEGER to max:INTEGER 
+  :FAST_ARRAY(LINES) <-
+  [
+    -? { f1.lower <= min };
+    -? { max <= f1.upper };
+    -? { min <= max+1 };
+  ]
   (
-    + nb_points:INTEGER;
-    + x,y,z:INTEGER;
+    + result:FAST_ARRAY(LINES);
 
-    IO.read_integer;
-    nb_points := IO.last_integer;
-
-    nb_points.println;
-    1.to nb_points do { i:INTEGER;
-      IO.read_integer;
-      x := IO.last_integer;
-      IO.read_integer;
-      y := IO.last_integer;
-      IO.read_integer;
-      z := IO.last_integer;
-      x.print;
-      " ".print;
-      y.print;
-      " ".print;
-      z.println;
-      "-1".println;
+    result := FAST_ARRAY(LINES).create_with_capacity(max-min+1);
+    min.to max do { i:INTEGER;
+      result.add_last(f1.item i);
     };
+    result
+  );
+
+  // Couldn't get "append" to work either, re-coded it.
+  - concat (f1,f2:FAST_ARRAY(LINES)) :FAST_ARRAY(LINES) <-
+  (
+    + result:FAST_ARRAY(LINES);
+
+    result := FAST_ARRAY(LINES).create_with_capacity(f1.count+f2.count);
+    0.to (f1.count-1) do { i:INTEGER;
+      result.add_last(f1.item i);
+    };
+    0.to (f2.count-1) do { i:INTEGER;
+      result.add_last(f2.item i);
+    };
+    result
+  );
+
+  - min_x (p1,p2:LINES) :LINES <-
+  (
+    + toreturn:LINES;
+
+    toreturn := p1;
+
+    (p1.src.x >= p2.src.x).if {
+      (p1.src.x = p2.src.x).if {
+        (p1.src.y > p2.src.y).if {
+          toreturn := p2;
+        };
+      } 
+      else {
+        toreturn := p2;
+      };
+    };
+    toreturn
+  );
+
+  - order_x <-
+  (
+    + local,tmp:LINES;
+    + count,count2,pos:INTEGER;
+
+    count := nb_objects - 1;
+    count2 := nb_objects - 2;
+
+    0.to count2 do { i:INTEGER;
+      pos := i;
+      local := my_lines.item i;
+      i.to count do { j:INTEGER;
+        tmp := min_x(local, (my_lines.item j));
+        ((tmp.src.x != local.src.x) || {tmp.src.y != local.src.y}).if {
+          local := tmp;
+          pos := j;
+        };
+      };
+      my_lines.put (my_lines.item i) to pos;
+      my_lines.put (local) to i;
+    };
+  );
+
+
+  - min_y (p1,p2:LINES) :LINES <-
+  (
+    + toreturn:LINES;
+
+    toreturn := p1;
+
+    (p1.src.y >= p2.src.y).if {
+      (p1.src.y = p2.src.y).if {
+        (p1.src.x > p2.src.x).if {
+          toreturn := p2;
+        };
+      }
+      else {
+        toreturn := p2;
+      };
+    };
+    toreturn
+  );
+
+  - order_y <-
+  (
+    + local,tmp:LINES;
+    + count,count2,pos:INTEGER;
+
+    count := nb_objects - 1;
+    count2 := nb_objects - 2;
+
+    0.to count2 do { i:INTEGER;
+      pos := i;
+      local := my_lines.item i;
+      i.to count do { j:INTEGER;
+        tmp := min_y(local, (my_lines.item j));
+        ((tmp.src.y != local.src.y) || {tmp.src.x != local.src.x}).if {
+          local := tmp;
+          pos := j;
+        };
+      };
+      my_lines.put (my_lines.item i) to pos;
+      my_lines.put (local) to i;
+    };
+  );
+  
+  - order_y (l:FAST_ARRAY(LINES)) size s:INTEGER :FAST_ARRAY(LINES) <-
+  (
+    + local,tmp:LINES;
+    + count,count2,pos:INTEGER;
+    + toreturn:FAST_ARRAY(LINES);
+    
+    toreturn := l.clone;
+
+    count := s - 1;
+    count2 := s - 2;
+
+    0.to count2 do { i:INTEGER;
+      pos := i;
+      local := toreturn.item i;
+      i.to count do { j:INTEGER;
+        tmp := min_y(local, (toreturn.item j));
+        ((tmp.src.y != local.src.y) || {tmp.src.x != local.src.x}).if {
+          local := tmp;
+          pos := j;
+        };
+      };
+      toreturn.put (toreturn.item i) to pos;
+      toreturn.put (local) to i;
+    };
+    toreturn
+  );
+
+  - exec :(FAST_ARRAY(LINES),INTEGER) <-
+  (
+    (my_lines,nb_objects) := DEPTH.solve;
+    order_x;
+    my_lines := make(my_lines);
+    my_lines,(nb_objects-1)
+  );
+
+  - debugging <-
+  (
+    + local:INTEGER;
+    + tmp:LINES;
+
+    my_lines.count.println;
+
+    0.to (nb_objects-1) do { i:INTEGER;
+      tmp := my_lines.item i;
+      tmp.src.debug;
+      local := tmp.nb_elem;
+      (tmp.nb_elem+1).println;
+      0.to local do { j:INTEGER;
+        (tmp.dest.item j).debug;
+      };
+    };
+  );
+
+  - make (my_array:FAST_ARRAY(LINES)) :FAST_ARRAY(LINES) <-
+  (
+    + sub1,sub2:FAST_ARRAY(LINES);
+    + result:FAST_ARRAY(LINES);
+    + mid:INTEGER;
+
+    result := my_array.clone;
+
+    (result.count <= 3).if {
+      (result.count = 2).if {
+        (result.item 0).add_dest((result.item 1).src);
+        (result.item 1).add_dest((result.item 0).src);
+      }.elseif { result.count = 3 } then {
+        (result.item 0).add_dest((result.item 1).src);
+        (result.item 0).add_dest((result.item 2).src);
+        (result.item 1).add_dest((result.item 0).src);
+        (result.item 1).add_dest((result.item 2).src);
+        (result.item 2).add_dest((result.item 0).src);
+        (result.item 2).add_dest((result.item 1).src);
+      };
+    }
+    else {
+      mid := (result.count-1)/2;
+      sub1 := subarray (result) from 0 to mid;
+      sub2 := subarray (result) from (mid+1) to (result.count-1);
+      result := merge(make(sub1), make(sub2));
+    };
+    result
+  );
+
+  - merge (f1,f2:FAST_ARRAY(LINES)) :FAST_ARRAY(LINES) <-
+  (
+    + result:FAST_ARRAY(LINES);
+    + tmp1,tmp2:FAST_ARRAY(LINES);
+    
+    //TODO : DELAUNAY ; Feature yet to be implemented.
+    
+    tmp1 := f1;
+    tmp2 := f2;
+    (tmp1.item (tmp1.count-1)).add_dest((tmp2.item 0).src);
+    (tmp1.item (tmp1.count-1)).add_dest((tmp2.item 1).src);
+    (tmp1.item (tmp1.count-2)).add_dest((tmp2.item 0).src);
+    //(tmp1.item (tmp1.count-2)).add_dest((tmp2.item 1).src);
+    tmp1 := order_y(tmp1) size (f1.count);
+    tmp2 := order_y(tmp2) size (f2.count);
+
+    (tmp1.item (tmp1.count-1)).add_dest((tmp2.item (tmp2.count-1)).src);
+
+    result := concat(tmp1, tmp2);
+    result
   );

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-lisaac mode
+lisaac mode -boost
 ./mode < test_mode

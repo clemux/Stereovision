@@ -1,8 +1,8 @@
 Section Header
 
   + name      := LINES;
-  - copyright := "2014 Benjamin Chetioui";
-  - author    := "Benjamin Chetioui";
+  - copyright := "2014 Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
+  - author    := "Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
   - comment   := "Un point et les lignes qui en sont issues (3D)";
 
 Section Inherit
@@ -64,6 +64,21 @@ Section Public
     + np:POINT;
     np := p.clone;
     dest_rotated.put np to index;
+  );
+
+  - chg_point (coef:REAL, index:UINTEGER_32) <-
+  (
+    + tmp:POINT;
+    
+    tmp := dest.item index;
+    
+    tmp.move(
+      (tmp.x.to_raw_real*coef).to_integer,
+      (tmp.y.to_raw_real*coef).to_integer,
+      (tmp.z.to_raw_real*coef).to_integer
+    );
+    
+    dest.put (tmp.clone) to index;
   );
 
   - debug <-

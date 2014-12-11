@@ -1,23 +1,9 @@
 all:
 	lisaac mode.li -boost
-	lisaac triangulate.li
-	lisaac translate.li
-	lisaac depth.li
-
-mode:
-	lisaac mode.li -boost
-
-triangle:
-	lisaac triangulate.li
-
-translate:
-	lisaac translate.li
-
-depth:
-	lisaac depth.li
+	make clean
 
 clean:
-	rm depth.c translate.c triangulate.c mode.c
+	rm *c
 
 clean_all:
-	rm depth translate triangulate mode depth.c translate.c triangulate.c mode.c
+	rm mode *c
