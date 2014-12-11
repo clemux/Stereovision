@@ -1,8 +1,8 @@
 Section Header
 
   + name      := MODE;
-  - copyright := "2014 Benjamin Chetioui";
-  - author    := "Benjamin Chetioui";
+  - copyright := "2014 Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
+  - author    := "Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
   - comment   := "Modélisation 3D de formes";
 
 Section Inherit
@@ -66,6 +66,10 @@ Section Public
       { b:G_BUTTON; switch_y; } |
       G_BUTTON.create (G_OUT.create "Rotation Z" justify (G_OUT.center)) action
       { b:G_BUTTON; switch_z; } |
+      G_BUTTON.create (G_OUT.create "Zoom x0.5" justify (G_OUT.center)) action
+      { b:G_BUTTON; zoom (0.5); } |
+      G_BUTTON.create (G_OUT.create "Zoom x2" justify (G_OUT.center)) action
+      { b:G_BUTTON; zoom (2.0); } |
       G_BUTTON.create (G_OUT.create "Exit" justify (G_OUT.center)) action
       { b:G_BUTTON; die_with_code exit_success_code; }
     );
@@ -88,48 +92,25 @@ Section Public
   - nb_objects:INTEGER := -1;
 
   // Initializing our lines and points to draw using standard input.
-  - lines_to_draw:FAST_ARRAY(LINES); /*:=
+  - lines_to_draw:FAST_ARRAY(LINES);
+
+  - zoom (coef:REAL) <-
   (
-    + result:FAST_ARRAY(LINES);
-    + new_lines, tmp:LINES;
-    + new_point:POINT;
-    + nb_points:INTEGER;
-    + local:INTEGER;
-    + x,y,z:INTEGER;
+    + tmp:LINES;
 
-    IO.read_integer;
-    nb_points := IO.last_integer;
-    result := FAST_ARRAY(LINES).create_with_capacity(nb_points);
-    new_point := POINT.clone;
-    new_lines := LINES.clone;
-
-    1.to nb_points do { i:INTEGER;
-      IO.read_integer;
-      x := IO.last_integer;
-      IO.read_integer;
-      y := IO.last_integer;
-      IO.read_integer;
-      z := IO.last_integer;
-      IO.read_integer;
-      local := IO.last_integer;
-      new_point.create(x,y,z);
-      new_lines.create(new_point, local);
-      1.to local do { j:INTEGER;
-        IO.read_integer;
-        x := IO.last_integer;
-        IO.read_integer;
-        y := IO.last_integer;
-        IO.read_integer;
-        z := IO.last_integer;
-        new_point.move(x,y,z);
-        new_lines.add_dest(new_point);
+    0.to nb_objects do { i:INTEGER;
+      tmp := lines_to_draw.item i;
+      tmp.src.move(
+        ((tmp.src.x).to_raw_real*coef).to_integer,
+        ((tmp.src.y).to_raw_real*coef).to_integer,
+        ((tmp.src.z).to_raw_real*coef).to_integer
+      );
+      0.to (tmp.nb_elem) do { j:INTEGER;
+        tmp.chg_point(coef, j);
       };
-      tmp := new_lines.clone;
-      result.add_last(tmp);
-      nb_objects := nb_objects + 1;
+      lines_to_draw.put (tmp.clone) to i;
     };
-    result
-  );*/
+  );
 
   - draw (x0,y0:INTEGER) to (x1,y1:INTEGER) <-
   ( 

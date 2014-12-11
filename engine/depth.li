@@ -1,8 +1,8 @@
 Section Header
 
   + name := DEPTH;
-  - copyright := "2014 Benjamin Chetioui";
-  - author := "Benjamin Chetioui";
+  - copyright := "2014 Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
+  - author := "Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
   - comment := "File containing functions to apply on points.";
 
 Section Inherit
@@ -49,8 +49,8 @@ Section Public
       x2 := IO.last_integer;
       IO.read_integer;
       y2 := IO.last_integer;
-      p1.create(x1-1280,y1-400,0);
-      p2.create(x2-1280,y2-400,0);
+      p1.create(x1,y1,0);
+      p2.create(x2,y2,0);
       (x1 > x2).if {
         p1.depth(p2, baseline, focal_length, ppmm);
         tmp := p1.clone;

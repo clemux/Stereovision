@@ -3,4 +3,4 @@
 ==============
 
 make
-./mode < data
+./test_all.sh

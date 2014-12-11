@@ -1,8 +1,8 @@
 Section Header
 
   + name      := TRIANGULATE;
-  - copyright := "2014 Benjamin Chetioui";
-  - author    := "Benjamin Chetioui";
+  - copyright := "2014 Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
+  - author    := "Benjamin Chetioui, Clément Schreiner, Loïc Laisné";
   - comment   := "Modélisation 3D de formes";
 
 Section Inherit
@@ -17,6 +17,8 @@ Section Public
   // Initializing our lines and points to draw using standard input.
   + my_lines:FAST_ARRAY(LINES);
 
+  // Subarray method in lib/internal/portable/collection/arrayed_collection.li
+  // might need some refactoring as I couldn't get it to work when coding this.
   - subarray (f1:FAST_ARRAY(LINES)) from min:INTEGER to max:INTEGER 
   :FAST_ARRAY(LINES) <-
   [
