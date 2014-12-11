@@ -184,6 +184,7 @@ void MainWindow::runProgram()
 
     QProcess mode;
     mode.setStandardInputFile(dialog.getDataPath());
+    mode.setProcessChannelMode(QProcess::ForwardedChannels);
     mode.start(dialog.getBinaryPath());
 
     mode.waitForFinished(-1);
