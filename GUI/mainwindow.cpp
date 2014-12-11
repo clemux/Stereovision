@@ -186,6 +186,6 @@ void MainWindow::runProgram()
     mode.setStandardInputFile(dialog.getDataPath());
     mode.start(dialog.getBinaryPath());
 
-    mode.waitForFinished();
+    mode.waitForFinished(-1);
 
 }
