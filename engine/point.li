@@ -35,9 +35,9 @@ Section Public
     color := col;
   );
 
-  - depth (sym_r:POINT, b,f,dpi:REAL_16_16) <-
+  - depth (sym_r:POINT, b,f,ppmm:REAL_16_16) <-
   (
-    z := (f*b/((x-sym_r.x).to_real_16_16/dpi)).to_integer;
+    z := (f*b/((x-sym_r.x).to_real_16_16/ppmm)).to_integer;
   );
 
   - debug <-

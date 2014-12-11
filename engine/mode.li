@@ -54,6 +54,7 @@ Section Public
 
   - main <-
   (
+    (lines_to_draw,nb_objects) := TRIANGULATE.exec;
     // Init window.
     VIDEO.make_size (width_min+64,height_min+64);
     DESK.make VIDEO with (
@@ -87,7 +88,7 @@ Section Public
   - nb_objects:INTEGER := -1;
 
   // Initializing our lines and points to draw using standard input.
-  - lines_to_draw:FAST_ARRAY(LINES) :=
+  - lines_to_draw:FAST_ARRAY(LINES); /*:=
   (
     + result:FAST_ARRAY(LINES);
     + new_lines, tmp:LINES;
@@ -128,7 +129,7 @@ Section Public
       nb_objects := nb_objects + 1;
     };
     result
-  );
+  );*/
 
   - draw (x0,y0:INTEGER) to (x1,y1:INTEGER) <-
   ( 

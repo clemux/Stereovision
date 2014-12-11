@@ -11,34 +11,34 @@ Section Inherit
 
 Section Public
 
-  - nb_objects:INTEGER := -1;
+  - nb_objects:INTEGER := 0;
 
-  - solve <-
+  - solve :(FAST_ARRAY(LINES),INTEGER) <-
   (
-    + p1, p2:POINT;
-    + dpi,focal_length,baseline:REAL_16_16;
+    + p1,p2,tmp:POINT;
+    + ppmm,focal_length,baseline:REAL_16_16;
     + nb_points:INTEGER;
     + x1,y1,x2,y2:INTEGER;
+    + f:FAST_ARRAY(LINES);
+    + myl,tmpl:LINES;
 
     IO.read_line;
     // In mm
     focal_length := IO.last_string.to_real_16_16;
     IO.read_line;
     // Actually in ppmm
-    dpi := IO.last_string.to_real_16_16;
+    ppmm := IO.last_string.to_real_16_16;
     IO.read_line;
     // In mm
     baseline := IO.last_string.to_real_16_16;
     IO.read_integer;
     nb_points := (IO.last_integer);
 
-    //baseline := baseline*dpi;
-    //focal_length := focal_length*dpi;
+    f := FAST_ARRAY(LINES).create_with_capacity(nb_points);
 
     p1 := POINT.clone;
     p2 := POINT.clone;
-
-    nb_points.println;
+    myl := LINES.clone;
 
     1.to nb_points do { i:INTEGER;
       IO.read_integer;
@@ -52,18 +52,25 @@ Section Public
       p1.create(x1-1280,y1-400,0);
       p2.create(x2-1280,y2-400,0);
       (x1 > x2).if {
-        p1.depth(p2, baseline, focal_length, dpi);
-        p1.debug;
+        p1.depth(p2, baseline, focal_length, ppmm);
+        tmp := p1.clone;
       }
+      // Points weren't entered as they should have been.
+      // Nevertheless, trying to use the data we were given.
       else {
         (x1 = x2).if {
           "Error: division by zero.".println;
           die_with_code (1);
         };
-        p2.depth(p1, baseline, focal_length, dpi);
-        p2.debug;
+        p2.depth(p1, baseline, focal_length, ppmm);
+        tmp := p2.clone;
       };
+      myl.create(tmp, nb_points);
+      tmpl := myl.clone;
+      f.add_last(tmpl);
+      nb_objects := nb_objects + 1;
     };
+    f,nb_objects
   );
 
   - atoi (str:STRING) :INTEGER <-
@@ -88,7 +95,7 @@ Section Public
     result*mult
   );
 
-  - main <-
+  /*- main <-
   (
     solve;
-  );
+  );*/

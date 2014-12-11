@@ -12,75 +12,10 @@ Section Inherit
 
 Section Public
 
-  /*- translating:FAST_ARRAY(LINES) :=
-  (
-    + result:FAST_ARRAY(LINES);
-    + new_lines, tmp:LINES;
-    + new_point:POINT;
-    + nb_points:INTEGER;
-    + local:INTEGER;
-    + x,y,z:INTEGER;
-    + z_min:INTEGER;
-
-    IO.read_integer;
-    nb_points := IO.last_integer;
-    result := FAST_ARRAY(LINES).create_with_capacity(nb_points);
-    new_point := POINT.clone;
-    new_lines := LINES.clone;
-
-    IO.read_integer;
-    nb_points := IO.last_integer;
-    nb_points.println;
-
-    1.to nb_points do { i:INTEGER;
-      IO.read_integer;
-      x := IO.last_integer;
-      IO.read_integer;
-      y := IO.last_integer;
-      IO.read_integer;
-      z := IO.last_integer;
-      x.print;
-      " ".print;
-      y.print;
-      " ".print;
-      z.println;
-      "1".println;
-      "0 0 0".println;
-    };
-  );*/
-
   + nb_objects:INTEGER := 0;
 
   // Initializing our lines and points to draw using standard input.
-  - my_lines:FAST_ARRAY(LINES) :=
-  (
-    + result:FAST_ARRAY(LINES);
-    + new_lines, tmp:LINES;
-    + new_point:POINT;
-    + nb_points:INTEGER;
-    + x,y,z:INTEGER;
-
-    IO.read_integer;
-    nb_points := IO.last_integer;
-    result := FAST_ARRAY(LINES).create_with_capacity(nb_points);
-    new_point := POINT.clone;
-    new_lines := LINES.clone;
-
-    1.to nb_points do { i:INTEGER;
-      IO.read_integer;
-      x := IO.last_integer;
-      IO.read_integer;
-      y := IO.last_integer;
-      IO.read_integer;
-      z := IO.last_integer;
-      new_point.create(x,y,z);
-      new_lines.create(new_point, nb_points-1);
-      tmp := new_lines.clone;
-      result.add_last(tmp);
-      nb_objects := nb_objects + 1;
-    };
-    result
-  );
+  + my_lines:FAST_ARRAY(LINES);
 
   - subarray (f1:FAST_ARRAY(LINES)) from min:INTEGER to max:INTEGER 
   :FAST_ARRAY(LINES) <-
@@ -225,16 +160,23 @@ Section Public
     toreturn
   );
 
+  - exec :(FAST_ARRAY(LINES),INTEGER) <-
+  (
+    (my_lines,nb_objects) := DEPTH.solve;
+    order_x;
+    my_lines := make(my_lines);
+    my_lines,(nb_objects-1)
+  );
 
-  - main <-
+  /*- main <-
   (
     my_lines;
-    /*debugging;
-    " ".println;*/
+    //debugging;
+    //" ".println;
     order_x;
     my_lines := make(my_lines);
     debugging;
-  );
+  );*/
 
   - debugging <-
   (
