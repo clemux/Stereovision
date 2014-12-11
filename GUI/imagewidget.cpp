@@ -94,7 +94,7 @@ void ImageWidget::mousePressEvent(QMouseEvent *event)
 
     QPoint pos = realCoords(event->pos());
     if (pos.x() > this->loadedImage->width()
-        || pos.y() > this->loadedImage->height())
+        || event->pos().y() > this->pixmap()->height())
         return ;
     this->pointClicked(realCoords(event->pos()));
 }
