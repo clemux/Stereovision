@@ -232,10 +232,20 @@ Section Public
   (
     + result:FAST_ARRAY(LINES);
     + tmp1,tmp2:FAST_ARRAY(LINES);
+    
+    //TODO : DELAUNAY
+    
+    tmp1 := f1;
+    tmp2 := f2;
+    (tmp1.item (tmp1.count-1)).add_dest((tmp2.item 0).src);
+    (tmp1.item (tmp1.count-1)).add_dest((tmp2.item 1).src);
+    (tmp1.item (tmp1.count-2)).add_dest((tmp2.item 0).src);
+    (tmp1.item (tmp1.count-2)).add_dest((tmp2.item 1).src);
+    tmp1 := order_y(tmp1) size (f1.count);
+    tmp2 := order_y(tmp2) size (f2.count);
+    (tmp1.item (tmp1.count-1)).add_dest((tmp1.item (tmp1.count-2)).src);
+    (tmp2.item (tmp2.count-1)).add_dest((tmp2.item (tmp2.count-2)).src);
 
-    tmp1 := order_y(f1) size (f1.count);
-    tmp2 := order_y(f2) size (f2.count);
-    (tmp1.item 0).add_dest((tmp2.item 0).src);
     result := concat(tmp1, tmp2);
     result
   );
