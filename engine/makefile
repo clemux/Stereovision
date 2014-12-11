@@ -6,4 +6,4 @@ clean:
 	rm *c
 
 clean_all:
-	rm mode *c
+	rm mode
